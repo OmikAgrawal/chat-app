@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chat | <%= username %>
+    </title>
+    <link rel="stylesheet" href="/style.css">
+    <script defer src="/client.js"></script>
+</head>
+
+<body class="chat-page">
+
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <div class="avatar-circle">
+                    <%= username.charAt(0).toUpperCase() %>
+                </div>
+                <div>
+                    <div class="header-title">Chat Room</div>
+                    <div class="header-subtitle">Logged in as <span>
+                            <%= username %>
+                        </span></div>
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="status-dot"></span> Online
+            </div>
+        </div>
+
+        <div id="messages">
+            <% messages.forEach(msg=> { %>
+                <div class="message <%= msg.username === username ? 'self' : 'other' %>">
+                    <div class="msg-meta">
+                        <span class="msg-user">
+                            <%= msg.username   %>
+                        </span>
+                        <span class="msg-time">
+                            <%= new Date(msg.created_at).toLocaleTimeString('en-IN', { hour: '2-digit' ,
+                                minute: '2-digit' }) %>
+                        </span>
+                    </div>
+                    <div class="msg-text">
+                        <%= msg.message %>
+                    </div>
+                </div>
+                <% }) %>
+        </div>
+
+        <div id="typing" class="typing-indicator" style="display:none;">
+            Someone is typing...
+        </div>
+
+        <form action="/send" method="post" class="chat-form" onsubmit="window.playSendSound && window.playSendSound();">
+            <input type="hidden" name="username" value="<%= username %>">
+            <input class="chat-input" name="message" type="text" placeholder="Type a message..." autocomplete="off"
+                required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+</body>
+
+</html>
