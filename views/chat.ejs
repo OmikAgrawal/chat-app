@@ -30,22 +30,6 @@
         </div>
 
         <div id="messages">
-            <% messages.forEach(msg=> { %>
-                <div class="message <%= msg.username === username ? 'self' : 'other' %>">
-                    <div class="msg-meta">
-                        <span class="msg-user">
-                            <%= msg.username   %>
-                        </span>
-                        <span class="msg-time">
-                            <%= new Date(msg.created_at).toLocaleTimeString('en-IN', { hour: '2-digit' ,
-                                minute: '2-digit' }) %>
-                        </span>
-                    </div>
-                    <div class="msg-text">
-                        <%= msg.message %>
-                    </div>
-                </div>
-                <% }) %>
         </div>
 
         <div id="typing" class="typing-indicator" style="display:none;">
