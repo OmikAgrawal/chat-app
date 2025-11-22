@@ -2,23 +2,24 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Join Chat</title>
+    <title>Login | Chat</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 
 <body class="join-page">
 
-    <div class="join-container">
-        <div class="join-box">
-            <h1>💬 Join the Chat</h1>
-            <p>Enter your name to continue</p>
+    <div class="join-box">
+        <h1>💬 Join Chat</h1>
 
-            <form action="/chat" method="GET" class="join-form">
-                <input type="text" name="name" placeholder="Enter your name..." autocomplete="off" required />
-                <button type="submit">Join</button>
-            </form>
-        </div>
+        <form action="/chat" method="GET" class="join-form">
+            <input name="name" placeholder="Enter username..." required>
+            <input type="password" name="pass" placeholder="Enter password..." required>
+            <button type="submit">Login</button>
+        </form>
+
+        <p style="margin-top: 10px; color:#aaa;">
+            New user? <a href="/register" style="color:#00e07a;">Register here</a>
+        </p>
     </div>
 
 </body>

@@ -39,28 +39,55 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
+
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
+app.post("/register", async (req, res) => {
+  const { name, pass } = req.body;
+
+  const check = await db.query("SELECT * FROM users WHERE username=$1", [name]);
+
+  if (check.rows.length > 0) {
+    return res.send("❌ Username already exists, try another.");
+  }
+
+  await db.query("INSERT INTO users(username, password) VALUES ($1, $2)", [name, pass]);
+
+  res.send("✅ Registration successful! <a href='/'>Login Now</a>");
+});
+
+
 // Chat page
 app.get("/chat", async (req, res) => {
   const name = req.query.name;
+  const pass = req.query.pass;
 
-  if (!name) {
-    return res.redirect("/");
+  if (!name || !pass) {
+    return res.send("⚠ Username and password required!");
   }
 
-  try {
-    const result = await db.query(
-      "SELECT id, username, message, created_at FROM messages ORDER BY created_at ASC LIMIT 50"
-    );
+  const result = await db.query("SELECT * FROM users WHERE username=$1", [name]);
 
-    res.render("chat", {
-      username: name,
-      messages: result.rows
-    });
-  } catch (err) {
-    console.error("Error fetching messages:", err);
-    res.status(500).send("Internal server error");
+  if (result.rows.length === 0) {
+    return res.send("❌ User not registered! <a href='/register'>Register here</a>");
   }
+
+  if (result.rows[0].password !== pass) {
+    return res.send("❌ Incorrect password. Access denied!");
+  }
+
+  // Fetch messages and allow entry
+  const msgs = await db.query("SELECT * FROM messages ORDER BY created_at ASC");
+
+  res.render("chat", {
+    username: name,
+    messages: msgs.rows
+  });
 });
+
+
 
 // Send message
 app.post("/send", async (req, res) => {
@@ -79,7 +106,11 @@ app.post("/send", async (req, res) => {
     console.error("Error inserting message:", err);
   }
 
-  res.redirect(`/chat?name=${encodeURIComponent(username)}`);
+  const result = await db.query("SELECT password FROM users WHERE username=$1", [username]);
+  const password = result.rows[0].password;
+  
+
+  res.redirect(`/chat?name=${encodeURIComponent(username)}&pass=${encodeURIComponent(password)}`);
 });
 
 // Poll messages (used by client.js)
